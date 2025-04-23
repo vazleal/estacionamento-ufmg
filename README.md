@@ -1,67 +1,81 @@
-🅿️ Sistema de Gerenciamento de Vagas – Versão Porteiro
-🎯 Objetivo
-Permitir que a portaria registre entradas de veículos de professores e alunos com base na carteirinha apresentada. O sistema controla ocupação e emite alertas de escassez de vagas reservadas para professores, podendo bloquear a entrada de alunos automaticamente.
+# Sistema de Gerenciamento de Vagas - Estacionamento Universitário
 
-🧩 Funcionalidades Principais
-✅ 1. Registro de Entrada de Veículo
-Interface simples com dois botões:
-+ Professor | + Aluno
+Este projeto é um sistema simples para gerenciar o uso de vagas em um estacionamento universitário, com foco em garantir a disponibilidade de vagas para **professores**, utilizando um backend em **FastAPI** e frontend em **React**.
 
-Ao clicar, o sistema registra a entrada com:
+## 🎯 Funcionalidades
 
-Timestamp
+- Registro de entrada e saída de veículos de **professores** e **alunos**
+- Controle de número total de vagas e vagas reservadas para professores
+- Bloqueio automático da entrada de alunos quando o estacionamento estiver cheio
+- Alerta quando restarem menos de 10% das vagas reservadas para professores
+- Painel de controle em tempo real no frontend
+- Persistência das configurações (número de vagas, limite de aviso) no banco de dados
 
-Tipo de motorista (professor ou aluno)
+---
 
-Dia da semana
+## 📦 Tecnologias
 
-✅ 2. Registro de Saída (opcional)
-Interface com botão – Professor | – Aluno
+### Backend (API):
+- [FastAPI](https://fastapi.tiangolo.com/)
+- SQLite (via `sqlite3`)
+- Estrutura modular com rotas separadas
 
-Pode ser usado para simular a saída de veículos e liberar vaga
+### Frontend:
+- [React](https://react.dev/) com Vite + TypeScript
+- Integração com a API via `axios`
+- Atualização em tempo real com `useEffect`
 
-✅ 3. Painel de Vagas em Tempo Real
-Exibe:
+---
 
-Vagas totais do estacionamento
+## 🚀 Como executar o projeto
 
-Vagas ocupadas (total e por tipo)
+### 🔧 Requisitos
+- Python 3.9+
+- Node.js 18+
 
-Vagas reservadas para professores (ex: 40)
+### ⚙️ Backend
+```bash
+# Instalar dependências
+pip install fastapi uvicorn
 
-Quantas dessas ainda estão disponíveis
+# Rodar o servidor
+uvicorn main:app --reload
+```
 
-Quantas vagas restantes no total
+### 🖥️ Frontend
+```bash
+# Criar projeto React com Vite
+npm create vite@latest estacionamento-frontend -- --template react-ts
+cd estacionamento-frontend
 
-✅ 4. Alerta de Escassez para Professores
-Se vagas reservadas para professores < 10% disponíveis:
+# Instalar dependências
+npm install axios
 
-Sistema exibe ALERTA VISUAL
+# Substituir App.tsx pelo componente React fornecido
 
-Opcional: aumenta a reserva automaticamente (ex: +5) se houver vagas disponíveis
+# Rodar
+npm run dev
+```
 
-Se não houver vagas gerais livres, bloqueia botão + Aluno
+---
 
-✅ 5. Relatório Histórico (por dia da semana)
-Tabela simples com:
+## 📁 Estrutura do Projeto
 
-Quantos professores e alunos entraram por dia
-
-Média por dia da semana
-
-Base para ajustar reservas
-
-💡 Regras de Negócio
-Vagas totais = 100 (por exemplo)
-
-Vagas reservadas para professores = 40 (configurável)
-
-Se ocupação de vagas reservadas for ≥ 90%:
-
-Mostrar aviso: "⚠️ Apenas X vagas reservadas restantes para professores"
-
-Se ainda houver vagas gerais, opcionalmente mover algumas para professores
-
-Se total de vagas lotadas:
-
-Bloquear botão + Aluno
+```bash
+estacionamento/
+├── main.py
+├── database.py
+├── models.py
+├── routes/
+│   ├── __init__.py
+│   ├── estatisticas.py
+│   ├── configuracoes.py
+│   └── entradas.py
+├── data/
+│   └── estacionamento.db
+estacionamento-frontend/
+├── src/
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── ...
+```
