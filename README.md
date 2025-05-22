@@ -57,6 +57,20 @@ npm install axios
 npm run dev
 ```
 
+### Frontend projeto atual:
+```bash
+
+
+cd frontend/react-ts
+npm install
+
+npm run dev
+
+# Instalar dependências
+npm install axios
+
+```
+
 ---
 
 ## 📁 Estrutura do Projeto

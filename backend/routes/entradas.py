@@ -27,6 +27,15 @@ def registrar_entrada(tipo: str):
 def registrar_saida(tipo: str):
     with get_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM entradas WHERE tipo = ? ORDER BY id DESC LIMIT 1", (tipo,))
+        cursor.execute("SELECT id FROM entradas WHERE tipo = ? ORDER BY id DESC LIMIT 1", (tipo,))
+        row = cursor.fetchone()
+        
+        if row == None:
+            raise HTTPException(status_code=404, detail= f'Nenhum {tipo} encontrado'.format(tipo))
+        
+        last_id = row[0]
+        # Deleta pela id
+        cursor.execute("DELETE FROM entradas WHERE id = ?", (last_id,))
         conn.commit()
+        
     return {"status": "saida registrada"}
