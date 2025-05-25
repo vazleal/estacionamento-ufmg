@@ -38,21 +38,15 @@ Este projeto é um sistema simples para gerenciar o uso de vagas em um estaciona
 # Instalar dependências
 pip install fastapi uvicorn
 
-# Rodar o servidor
+# Rodar
 uvicorn main:app --reload
+
+# Rodar no windows
+python -m uvicorn main:app --reload
 ```
 
 ### 🖥️ Frontend
 ```bash
-# Criar projeto React com Vite
-npm create vite@latest estacionamento-frontend -- --template react-ts
-cd estacionamento-frontend
-
-# Instalar dependências
-npm install axios
-
-# Substituir App.tsx pelo componente React fornecido
-
 # Rodar
 npm run dev
 ```
