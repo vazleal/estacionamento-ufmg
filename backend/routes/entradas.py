@@ -43,4 +43,5 @@ def registrar_saida(tipo: str):
         last_id = row[0]
         cursor.execute("DELETE FROM entradas WHERE id = ?", (last_id,))
         conn.commit()
+        
     return {"status": "saida registrada"}

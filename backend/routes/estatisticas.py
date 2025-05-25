@@ -27,11 +27,7 @@ def get_estatisticas():
 
         # alerta continua como antes (sobre vagas prof ↓ do aviso)
         alerta = vagas_restantes_prof <= reservadas_prof * aviso_limite
-        # bloquear aluno quando não sobrar mais vaga de aluno
-        bloquear_aluno = vagas_restantes_aluno <= 0
-
-        # mantém o campo “livres” como o total restante geral
-        vagas_restantes = total_vagas - total_ocupado
+        bloquear_aluno = total_ocupado >= (total_vagas - reservadas_prof) or vagas_restantes <= 0
 
         return Estatisticas(
             total=total_vagas,
