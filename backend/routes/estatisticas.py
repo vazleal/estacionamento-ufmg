@@ -22,7 +22,7 @@ def get_estatisticas():
         vagas_restantes = total_vagas - total_ocupado
         vagas_restantes_prof = reservadas_prof - professores
         alerta = vagas_restantes_prof <= reservadas_prof * aviso_limite
-        bloquear_aluno = total_ocupado >= total_vagas or vagas_restantes <= 0
+        bloquear_aluno = total_ocupado >= (total_vagas - reservadas_prof) or vagas_restantes <= 0
 
         return Estatisticas(
             total=total_vagas,

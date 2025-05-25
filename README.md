@@ -47,8 +47,12 @@ python -m uvicorn main:app --reload
 
 ### 🖥️ Frontend
 ```bash
+cd frontend/react-ts
+npm install
+
 # Rodar
 npm run dev
+
 ```
 
 ---
