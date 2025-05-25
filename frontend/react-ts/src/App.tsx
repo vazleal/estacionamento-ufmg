@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "./App.css";
 
 type Estatisticas = {
   total: number;
@@ -39,68 +40,101 @@ function App() {
       await axios.post(`http://localhost:8000/${acao}/${tipo}`);
       await fetchStats();
     } catch (err: any) {
-      alert(err.response?.data?.detail || "Erro ao registrar ação");
+      alert(err.response?.data?.detail ?? "Erro ao registrar ação");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!stats) return <div>Carregando...</div>;
+  if (!stats) {
+    return (
+      <div className="app-container">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ padding: "2rem", maxWidth: 800, margin: "0 auto" }}>
-      <h1>Painel de Estacionamento</h1>
+    <div className="app-wrapper">
+      <header className="header">
+        <h1>
+          Painel de Estacionamento <span>UFMG</span>
+        </h1>
+      </header>
+      <main className="main-content">
+        <div className="card">
+          <section className="stats-grid">
+            <div className="stat-item">
+              <div className="stat-label">Total de Vagas</div>
+              <div className="stat-value">{stats.total}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-label">Disponíveis</div>
+              <div className="stat-value">{stats.livres}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-label">Ocupadas</div>
+              <div className="stat-value">{stats.ocupadas}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-label">Professores</div>
+              <div className="stat-value">{stats.professores}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-label">Alunos</div>
+              <div className="stat-value">{stats.alunos}</div>
+            </div>
+            <div className="stat-item">
+              <div className="stat-label">Reservadas Professores</div>
+              <div className="stat-value">{stats.reservadas_prof}</div>
+            </div>
+          </section>
 
-      <p>Total de Vagas: {stats.total}</p>
-      <p>Vagas disponíveis: {stats.livres}</p>
+          {stats.alerta && stats.professores < stats.reservadas_prof && (
+            <div className="alert warning">
+              ⚠️ Poucas vagas reservadas para professores!
+            </div>
+          )}
 
-      <p>Vagas ocupadas: {stats.ocupadas}</p>
-      <p>Vagas ocupadas por professores: {stats.professores}</p>
-      <p>Vagas ocupadas por alunos: {stats.alunos}</p>
+          {stats.bloquear_aluno && (
+            <div className="alert error">🚫 Entrada de alunos bloqueada.</div>
+          )}
 
-      <p>Reservadas para professores: {stats.reservadas_prof}</p>
-      {stats.alerta && stats.professores < stats.reservadas_prof && (
-        <p style={{ color: "orange", fontWeight: "bold" }}>
-          ⚠️ Atenção: poucas vagas reservadas para professores!
-        </p>
-      )}
-
-      {stats.bloquear_aluno && (
-        <p style={{ color: "red", fontWeight: "bold" }}>
-          🚫 Entrada de alunos temporariamente bloqueada.
-        </p>
-      )}
-
-      <div
-        style={{
-          marginTop: "1rem",
-          display: "flex",
-          gap: "0.5rem",
-          flexWrap: "wrap",
-        }}
-      >
-        <button
-          disabled={loading}
-          onClick={() => registrar("professor", "entrada")}
-        >
-          + Professor
-        </button>
-        <button
-          disabled={loading || stats.bloquear_aluno}
-          onClick={() => registrar("aluno", "entrada")}
-        >
-          + Aluno
-        </button>
-        <button
-          disabled={loading}
-          onClick={() => registrar("professor", "saida")}
-        >
-          - Professor
-        </button>
-        <button disabled={loading} onClick={() => registrar("aluno", "saida")}>
-          - Aluno
-        </button>
-      </div>
+          <section className="actions">
+            <button
+              className="btn btn-primary"
+              disabled={loading}
+              onClick={() => registrar("professor", "entrada")}
+            >
+              Entrada de Professor
+            </button>
+            <button
+              className="btn btn-primary"
+              disabled={loading || stats.bloquear_aluno}
+              onClick={() => registrar("aluno", "entrada")}
+            >
+              Entrada de Aluno
+            </button>
+            <button
+              className="btn btn-secondary"
+              disabled={loading}
+              onClick={() => registrar("professor", "saida")}
+            >
+              Saida de Professor
+            </button>
+            <button
+              className="btn btn-secondary"
+              disabled={loading}
+              onClick={() => registrar("aluno", "saida")}
+            >
+              Saida de Aluno
+            </button>
+          </section>
+        </div>
+      </main>
+      <footer className="footer">
+        <p>Dados atualizados automaticamente a cada 5 segundos</p>
+      </footer>
     </div>
   );
 }
