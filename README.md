@@ -44,30 +44,11 @@ uvicorn main:app --reload
 
 ### 🖥️ Frontend
 ```bash
-# Criar projeto React com Vite
-npm create vite@latest estacionamento-frontend -- --template react-ts
-cd estacionamento-frontend
-
-# Instalar dependências
-npm install axios
-
-# Substituir App.tsx pelo componente React fornecido
-
-# Rodar
-npm run dev
-```
-
-### Frontend projeto atual:
-```bash
-
 
 cd frontend/react-ts
 npm install
 
 npm run dev
-
-# Instalar dependências
-npm install axios
 
 ```
 
