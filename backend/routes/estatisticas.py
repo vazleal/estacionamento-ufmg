@@ -19,10 +19,19 @@ def get_estatisticas():
         alunos = dados.get("aluno", 0)
         total_ocupado = professores + alunos
 
-        vagas_restantes = total_vagas - total_ocupado
+        # vagas reservadas para profs que ainda restam
         vagas_restantes_prof = reservadas_prof - professores
+        # total de vagas que aluno pode usar
+        limite_alunos = total_vagas - reservadas_prof
+        vagas_restantes_aluno = limite_alunos - alunos
+
+        # alerta continua como antes (sobre vagas prof ↓ do aviso)
         alerta = vagas_restantes_prof <= reservadas_prof * aviso_limite
-        bloquear_aluno = total_ocupado >= total_vagas or vagas_restantes <= 0
+        # bloquear aluno quando não sobrar mais vaga de aluno
+        bloquear_aluno = vagas_restantes_aluno <= 0
+
+        # mantém o campo “livres” como o total restante geral
+        vagas_restantes = total_vagas - total_ocupado
 
         return Estatisticas(
             total=total_vagas,
