@@ -8,7 +8,6 @@ class Estatisticas(BaseModel):
     professores: int
     alunos: int
     livres: int
-    livres_prof: int
     alerta: bool
     bloquear_aluno: bool
 
