@@ -11,8 +11,19 @@ def registrar_entrada(tipo: str):
         raise HTTPException(status_code=400, detail="Tipo inválido")
 
     stats = get_estatisticas()
+    
+    if stats.livres <= 0:
+        raise HTTPException(
+            status_code=403,
+            detail="Estacionamento cheio: não há vagas disponíveis"
+        )
+        
     if tipo == "aluno" and stats.bloquear_aluno:
-        raise HTTPException(status_code=403, detail="Entrada de aluno bloqueada: estacionamento cheio")
+        raise HTTPException(
+            status_code=403,
+            detail="Entrada de aluno bloqueada: limite de vagas para alunos atingido"
+        )
+        
     agora = datetime.now()
     dia_semana = agora.strftime('%A')
     with get_connection() as conn:
