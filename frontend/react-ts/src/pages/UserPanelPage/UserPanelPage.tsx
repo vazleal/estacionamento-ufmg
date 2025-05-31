@@ -4,7 +4,8 @@ import "./UserPanelPage.css";
 
 export const UserPanelPage: React.FC = () => {
     const handleLogout = () => {
-        localStorage.removeItem("token");
+        localStorage.removeItem("usuario_id");
+        localStorage.removeItem("usuario_nome");
         window.location.href = "/login";
     };
 
