@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import "../App.css";
+import "../../App.css";
 
-const LoginPage: React.FC = () => {
+export const LoginPage: React.FC = () => {
     const [isRegister, setIsRegister] = useState(false);
     const [form, setForm] = useState({ email: "", password: "", confirm: "" });
 
@@ -26,47 +26,51 @@ const LoginPage: React.FC = () => {
 
     return (
         <main className="main-content">
-            <div className="card">
-                <div className="login-container">
-                    <h2>{isRegister ? "Cadastro" : "Login"}</h2>
-                    <form onSubmit={handleSubmit} className="login-form">
-                        <input
-                            type="email"
-                            name="email"
-                            placeholder="E-mail"
-                            value={form.email}
-                            onChange={handleChange}
-                            required
-                            className="input"
-                        />
+            <div className="login-card">
+                <form onSubmit={handleSubmit} className="login-container">
+                    <span className="login-title">{isRegister ? "Cadastro" : "Login"}</span>
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="E-mail"
+                        value={form.email}
+                        onChange={handleChange}
+                        required
+                        className="input"
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Senha"
+                        value={form.password}
+                        onChange={handleChange}
+                        required
+                        className="input"
+                    />
+                    {isRegister && (
                         <input
                             type="password"
-                            name="password"
-                            placeholder="Senha"
-                            value={form.password}
+                            name="confirm"
+                            placeholder="Confirme a senha"
+                            value={form.confirm}
                             onChange={handleChange}
                             required
                             className="input"
                         />
-                        {isRegister && (
-                            <input
-                                type="password"
-                                name="confirm"
-                                placeholder="Confirme a senha"
-                                value={form.confirm}
-                                onChange={handleChange}
-                                required
-                                className="input"
-                            />
-                        )}
-                        <button type="submit" className="button">
+                    )}
+                    <div>
+                        <button type="submit" className="login-btn">
                             {isRegister ? "Cadastrar" : "Entrar"}
                         </button>
-                    </form>
+                    </div>
+                </form>
+                <div>
                     <p>
-                        {isRegister ? "Já tem uma conta?" : "Não tem uma conta?"}{" "}
+                        <div>
+                            {isRegister ? "Já tem uma conta?" : "Não tem uma conta?"}{" "}
+                        </div>
                         <button
-                            className="link-button"
+                            className="login-btn"
                             onClick={() => setIsRegister(!isRegister)}
                             type="button"
                         >
