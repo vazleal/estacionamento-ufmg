@@ -20,3 +20,26 @@ class ConfiguracoesOutput(BaseModel):
     total_vagas: int
     reservadas_professores: int
     aviso_limite: float
+
+class UsuarioInput(BaseModel):
+    nome: str
+    email: str
+    senha: str
+    matricula: str
+
+class UsuarioOutput(BaseModel):
+    id: int
+    nome: str
+    email: str
+    matricula: str
+
+class LoginInput(BaseModel):
+    email: str
+    senha: str
+
+class VeiculoInput(BaseModel):
+    placa: str
+
+class VeiculoOutput(BaseModel):
+    id: int
+    placa: str

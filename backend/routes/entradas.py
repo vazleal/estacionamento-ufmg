@@ -6,6 +6,14 @@ from routes.estatisticas import get_estatisticas
 router = APIRouter()
 
 @router.post("/entrada/{tipo}")
+def tem_veiculo(usuario_id: int):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT COUNT(*) FROM veiculos WHERE usuario_id = ?
+        """, (usuario_id,))
+        return cursor.fetchone()[0] > 0
+
 def registrar_entrada(tipo: str):
     if tipo not in ["professor", "aluno"]:
         raise HTTPException(status_code=400, detail="Tipo inválido")

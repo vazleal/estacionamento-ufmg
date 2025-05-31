@@ -29,7 +29,26 @@ def init_db():
             INSERT OR IGNORE INTO configuracoes (id, total_vagas, reservadas_professores, aviso_limite)
             VALUES (1, 100, 40, 0.1)
         ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                senha TEXT NOT NULL,
+                matricula TEXT UNIQUE NOT NULL
+            )
+        ''')
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS veiculos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                usuario_id INTEGER NOT NULL,
+                placa TEXT NOT NULL UNIQUE,
+                FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+            )    
+        ''')
         conn.commit()
 
 def get_connection():
     return sqlite3.connect(DATABASE)
+
+
