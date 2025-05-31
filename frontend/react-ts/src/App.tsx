@@ -37,9 +37,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
-            <Route path="/painel" element={
-                <UserPanelPage />
-            } />
+            <Route path="/painel" element={<UserPanelPage />} />
           </Routes>
         </main>
         <footer className="footer">
