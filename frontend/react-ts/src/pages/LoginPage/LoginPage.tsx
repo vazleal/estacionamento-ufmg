@@ -46,9 +46,13 @@ export const LoginPage: React.FC = () => {
                     senha: form.senha,
                     matricula: form.matricula
                 });
-                alert("Cadastro realizado com sucesso!");
-                setIsRegister(false);
-                navigate("/login");  // Redireciona para Login
+                if(res.status == 200) {
+                    alert("Cadastro realizado com sucesso!");
+                    setIsRegister(false);
+                    navigate("/login");  // Redireciona para Login
+                } else {
+                    alert(res.data.detail || "Erro no cadastro.");
+                }
             } catch (error: any) {
                 alert(error.response?.data?.detail || "Erro no cadastro.");
             }
