@@ -21,7 +21,7 @@ export const LoginPage: React.FC = () => {
             navigate("/painel", { replace: true });
         }
     }, [navigate]);
-    
+
     if (localStorage.getItem("usuario_id")) {
         return null; 
     }
@@ -61,6 +61,7 @@ export const LoginPage: React.FC = () => {
                 alert("Login realizado com sucesso!");
                 localStorage.setItem("usuario_id", res.data.id);
                 localStorage.setItem("usuario_nome", res.data.nome);
+                window.location.reload();  // Recarrega a página para atualizar o estado
 
                 navigate("/");  // Redireciona para Home
             } catch (error: any) {
