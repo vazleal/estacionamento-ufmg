@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "../../App.css";
+import "./LoginPage.css";
 
 export const LoginPage: React.FC = () => {
     const [isRegister, setIsRegister] = useState(false);
