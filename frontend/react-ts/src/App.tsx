@@ -3,11 +3,10 @@ import "./App.css";
 import { HomePage } from "./pages/HomePage/HomePage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { UserPanelPage } from "./pages/UserPanelPage/UserPanelPage";
+import { useState } from "react";
 
 function App() {
-
-  const isLoggedIn = !!localStorage.getItem("usuario_id");
-
+  const [isLoggedIn] = useState<boolean>(!!localStorage.getItem("usuario_id"));
 
   return (
     <Router>

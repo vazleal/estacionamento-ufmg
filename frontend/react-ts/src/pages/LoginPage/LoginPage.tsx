@@ -16,6 +16,16 @@ export const LoginPage: React.FC = () => {
 
     const navigate = useNavigate();
 
+    React.useEffect(() => {
+        if (localStorage.getItem("usuario_id")) {
+            navigate("/painel", { replace: true });
+        }
+    }, [navigate]);
+    
+    if (localStorage.getItem("usuario_id")) {
+        return null; 
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
