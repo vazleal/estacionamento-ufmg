@@ -4,6 +4,15 @@ from main import app
 
 client = TestClient(app)
 
+@pytest.fixture(autouse=True)
+def reset_usuarios():
+    from database import get_connection
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM usuarios")
+        conn.commit()
+    yield
+
 def test_register_user_success():
     response = client.post("/register", json={
         "nome": "Teste",
