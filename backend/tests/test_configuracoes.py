@@ -54,3 +54,10 @@ def test_atualizar_configuracoes():
     assert response_get.status_code == 200
     assert response_get.json() == payload
 
+@pytest.mark.parametrize("payload,expected_status", [
+    ({"total_vagas": "cem", "reservadas_professores": 10, "aviso_limite": 0.1}, 422),
+    ({"total_vagas": 100, "reservadas_professores": None, "aviso_limite": 0.1}, 422),
+])
+def test_atualizar_configuracoes_dados_invalidos(payload, expected_status):
+    response = client.put("/configuracoes", json=payload)
+    assert response.status_code == expected_status
