@@ -38,6 +38,9 @@ Este projeto é um sistema simples para gerenciar o uso de vagas em um estaciona
 # Instalar dependências
 pip install fastapi uvicorn
 
+# Entrar no backend
+cd backend
+
 # Rodar
 uvicorn main:app --reload
 

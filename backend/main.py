@@ -3,6 +3,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes import estatisticas, configuracoes, entradas
 from database import init_db
+from routes import estatisticas, configuracoes, entradas, usuarios
+
 
 init_db()
 
@@ -19,3 +21,4 @@ app.add_middleware(
 app.include_router(estatisticas.router)
 app.include_router(configuracoes.router)
 app.include_router(entradas.router)
+app.include_router(usuarios.router)
