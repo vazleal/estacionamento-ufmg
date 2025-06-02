@@ -29,7 +29,6 @@ def reset_configuracoes():
         cursor.execute("DELETE FROM configuracoes WHERE id = 1")
         conn.commit()
 
-
 def test_obter_configuracoes():
     response = client.get("/configuracoes")
     assert response.status_code == 200
@@ -39,3 +38,19 @@ def test_obter_configuracoes():
         "reservadas_professores": 40,
         "aviso_limite": 0.1
     }
+
+def test_atualizar_configuracoes():
+    payload = {
+        "total_vagas": 150,
+        "reservadas_professores": 50,
+        "aviso_limite": 0.2
+    }
+    response = client.put("/configuracoes", json=payload)
+    assert response.status_code == 200
+    assert response.json() == {"status": "configurações atualizadas"}
+
+    # Verifica se os dados foram atualizados no banco
+    response_get = client.get("/configuracoes")
+    assert response_get.status_code == 200
+    assert response_get.json() == payload
+
