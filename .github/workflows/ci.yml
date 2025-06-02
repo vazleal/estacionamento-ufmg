@@ -50,7 +50,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./frontend
+        working-directory: ./frontend/react-ts
 
     steps:
     - uses: actions/checkout@v4
