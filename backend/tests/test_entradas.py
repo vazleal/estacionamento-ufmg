@@ -42,5 +42,16 @@ def test_entrada_estacionamento_cheio(monkeypatch):
     response = client.post("/entrada/aluno")
     assert response.status_code == 403
 
+def test_entrada_aluno_bloqueado(monkeypatch):
+    class MockStats:
+        livres = 5
+        bloquear_aluno = True
+
+    monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
+
+    response = client.post("/entrada/aluno")
+    assert response.status_code == 403
+
+
 
 
