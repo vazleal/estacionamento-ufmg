@@ -32,3 +32,15 @@ def test_saida_tipo_invalido():
     assert response.status_code == 400
     assert response.json()["detail"] == "Tipo inválido"
 
+def test_entrada_estacionamento_cheio(monkeypatch):
+    class MockStats:
+        livres = 0
+        bloquear_aluno = False
+
+    monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
+
+    response = client.post("/entrada/aluno")
+    assert response.status_code == 403
+
+
+
