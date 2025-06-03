@@ -52,6 +52,19 @@ def test_entrada_aluno_bloqueado(monkeypatch):
     response = client.post("/entrada/aluno")
     assert response.status_code == 403
 
+def test_entrada_sucesso_professor(monkeypatch):
+    class MockStats:
+        livres = 3
+        bloquear_aluno = False
 
+    monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
 
+    response = client.post("/entrada/professor")
+    assert response.status_code == 200
+    assert response.json() == {"status": "entrada registrada"}
 
+def test_saida_sem_entrada():
+    response = client.post("/saida/aluno")
+    assert response.status_code == 404
+    assert "Nenhuma entrada de aluno encontrada" in response.json()["detail"]
+    
