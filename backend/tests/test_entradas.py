@@ -27,3 +27,8 @@ def test_entrada_tipo_invalido():
     assert response.status_code == 400
     assert response.json()["detail"] == "Tipo inválido"
 
+def test_saida_tipo_invalido():
+    response = client.post("/saida/invalido")
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Tipo inválido"
+
