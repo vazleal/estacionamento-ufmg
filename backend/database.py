@@ -27,10 +27,16 @@ def init_db(db_path_to_init: str = None):
             CREATE TABLE IF NOT EXISTS entradas (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 tipo TEXT NOT NULL,
+                placa TEXT NOT NULL,
                 data_hora TEXT NOT NULL,
                 dia_semana TEXT NOT NULL
             )
         ''')
+        # Caso a tabela já exista sem a coluna de placa (versões antigas)
+        cursor.execute("PRAGMA table_info(entradas)")
+        cols = [row[1] for row in cursor.fetchall()]
+        if 'placa' not in cols:
+            cursor.execute("ALTER TABLE entradas ADD COLUMN placa TEXT NOT NULL DEFAULT ''")
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS configuracoes (
                 id INTEGER PRIMARY KEY CHECK (id = 1),

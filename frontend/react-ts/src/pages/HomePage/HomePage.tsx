@@ -16,6 +16,7 @@ type Estatisticas = {
 export const HomePage = () => {
     const [stats, setStats] = useState<Estatisticas | null>(null);
     const [loading, setLoading] = useState(false);
+    const [placa, setPlaca] = useState("");
 
     const fetchStats = async () => {
         const res = await axios.get<Estatisticas>(
@@ -34,10 +35,15 @@ export const HomePage = () => {
         tipo: "professor" | "aluno",
         acao: "entrada" | "saida"
     ) => {
+        if (!placa.trim()) {
+            alert("Digite a placa do veículo");
+            return;
+        }
         setLoading(true);
         try {
-            await axios.post(`http://localhost:8000/${acao}/${tipo}`);
+            await axios.post(`http://localhost:8000/${acao}/${tipo}`, { placa });
             await fetchStats();
+            setPlaca("");
         } catch (err: any) {
             alert(err.response?.data?.detail ?? "Erro ao registrar ação");
         } finally {
@@ -93,6 +99,13 @@ export const HomePage = () => {
             )}
 
             <section className="actions">
+                <input
+                    type="text"
+                    value={placa}
+                    onChange={(e) => setPlaca(e.target.value.toUpperCase())}
+                    placeholder="Placa do veículo"
+                    className="input"
+                />
                 <button
                     className="btn btn-primary"
                     disabled={loading}

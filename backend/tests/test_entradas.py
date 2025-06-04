@@ -23,12 +23,12 @@ def reset_dados():
 
 #TESTES 
 def test_entrada_tipo_invalido():
-    response = client.post("/entrada/invalido")
+    response = client.post("/entrada/invalido", json={"placa": "ABC1234"})
     assert response.status_code == 400
     assert response.json()["detail"] == "Tipo inválido"
 
 def test_saida_tipo_invalido():
-    response = client.post("/saida/invalido")
+    response = client.post("/saida/invalido", json={"placa": "ABC1234"})
     assert response.status_code == 400
     assert response.json()["detail"] == "Tipo inválido"
 
@@ -39,7 +39,7 @@ def test_entrada_estacionamento_cheio(monkeypatch):
 
     monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
 
-    response = client.post("/entrada/aluno")
+    response = client.post("/entrada/aluno", json={"placa": "XYZ1234"})
     assert response.status_code == 403
 
 def test_entrada_aluno_bloqueado(monkeypatch):
@@ -49,7 +49,7 @@ def test_entrada_aluno_bloqueado(monkeypatch):
 
     monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
 
-    response = client.post("/entrada/aluno")
+    response = client.post("/entrada/aluno", json={"placa": "XYZ1234"})
     assert response.status_code == 403
 
 def test_entrada_sucesso_professor(monkeypatch):
@@ -59,12 +59,12 @@ def test_entrada_sucesso_professor(monkeypatch):
 
     monkeypatch.setattr(routes.entradas, "get_estatisticas", lambda: MockStats())
 
-    response = client.post("/entrada/professor")
+    response = client.post("/entrada/professor", json={"placa": "PROF123"})
     assert response.status_code == 200
     assert response.json() == {"status": "entrada registrada"}
 
 def test_saida_sem_entrada():
-    response = client.post("/saida/aluno")
+    response = client.post("/saida/aluno", json={"placa": "SEM1234"})
     assert response.status_code == 404
-    assert "Nenhuma entrada de aluno encontrada" in response.json()["detail"]
+    assert "Nenhuma entrada de aluno" in response.json()["detail"]
     

@@ -43,3 +43,6 @@ class VeiculoInput(BaseModel):
 class VeiculoOutput(BaseModel):
     id: int
     placa: str
+
+class PlacaInput(BaseModel):
+    placa: str

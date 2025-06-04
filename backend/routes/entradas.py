@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from database import get_connection
 from routes.estatisticas import get_estatisticas
+from models import PlacaInput
 
 router = APIRouter()
 
@@ -14,9 +15,17 @@ router = APIRouter()
 #        """, (usuario_id,))
 #        return cursor.fetchone()[0] > 0
 
-def registrar_entrada(tipo: str):
+def registrar_entrada(tipo: str, placa_info: PlacaInput):
     if tipo not in ["professor", "aluno"]:
         raise HTTPException(status_code=400, detail="Tipo inválido")
+
+    placa = placa_info.placa.upper()
+
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM entradas WHERE placa = ?", (placa,))
+        if cursor.fetchone():
+            raise HTTPException(status_code=400, detail="Veículo já está no estacionamento")
 
     stats = get_estatisticas()
     
@@ -37,27 +46,28 @@ def registrar_entrada(tipo: str):
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO entradas (tipo, data_hora, dia_semana) VALUES (?, ?, ?)",
-            (tipo, agora.isoformat(), dia_semana)
+            "INSERT INTO entradas (tipo, placa, data_hora, dia_semana) VALUES (?, ?, ?, ?)",
+            (tipo, placa, agora.isoformat(), dia_semana)
         )
         conn.commit()
     return {"status": "entrada registrada"}
 
 @router.post("/saida/{tipo}")
-def registrar_saida(tipo: str):
+def registrar_saida(tipo: str, placa_info: PlacaInput):
     if tipo not in ["professor", "aluno"]:
         raise HTTPException(status_code=400, detail="Tipo inválido")
+    placa = placa_info.placa.upper()
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id FROM entradas WHERE tipo = ? ORDER BY id DESC LIMIT 1",
-            (tipo,)
+            "SELECT id FROM entradas WHERE tipo = ? AND placa = ? ORDER BY id DESC LIMIT 1",
+            (tipo, placa)
         )
         row = cursor.fetchone()
         if not row:
             raise HTTPException(
                 status_code=404,
-                detail=f"Nenhuma entrada de {tipo} encontrada para saída"
+                detail=f"Nenhuma entrada de {tipo} com essa placa encontrada para saída"
             )
         last_id = row[0]
         cursor.execute("DELETE FROM entradas WHERE id = ?", (last_id,))
