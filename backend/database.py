@@ -2,12 +2,26 @@
 import sqlite3
 import os
 
-DATABASE = 'data/estacionamento.db'
+DEFAULT_DATABASE_PATH = 'data/estacionamento.db'
 
-def init_db():
+_CURRENT_DATABASE_PATH = os.environ.get('APP_DATABASE_PATH', DEFAULT_DATABASE_PATH)
+
+def get_db_path():
+    return _CURRENT_DATABASE_PATH
+
+def set_db_path(path: str):
+    global _CURRENT_DATABASE_PATH
+    _CURRENT_DATABASE_PATH = path
+    db_dir = os.path.dirname(path)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+
+def init_db(db_path_to_init: str = None):
+    current_path = db_path_to_init if db_path_to_init else get_db_path()
+    
     if not os.path.exists('data'):
         os.makedirs('data')
-    with sqlite3.connect(DATABASE) as conn:
+    with sqlite3.connect(current_path) as conn:
         cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS entradas (
@@ -49,6 +63,6 @@ def init_db():
         conn.commit()
 
 def get_connection():
-    return sqlite3.connect(DATABASE)
+    return sqlite3.connect(get_db_path())
 
 
