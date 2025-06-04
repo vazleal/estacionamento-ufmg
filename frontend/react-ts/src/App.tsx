@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
 import "./App.css";
-import { HomePage } from "./pages/HomePage/HomePage";
+import { EstacionamentoPage } from "./pages/EstacionamentoPage/EstacionamentoPage";
 import { LoginPage } from "./pages/LoginPage/LoginPage";
 import { UserPanelPage } from "./pages/UserPanelPage/UserPanelPage";
 import { useState } from "react";
@@ -20,7 +20,7 @@ function App() {
             <ul>
               {usuarioTipo === "admin" && (
                 <li>
-                  <Link to="/" className="btn btn-secondary">Home</Link>
+                  <Link to="/estacionamento" className="btn btn-secondary">Estacionamento</Link>
                 </li>
               )}
               {!isLoggedIn ? (
@@ -37,7 +37,8 @@ function App() {
         </header>
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route path="/" element={<Navigate to="/estacionamento" replace />} />
+            <Route path="/estacionamento" element={<EstacionamentoPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/painel" element={<UserPanelPage />} />
           </Routes>

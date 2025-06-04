@@ -13,7 +13,7 @@ type Estatisticas = {
   bloquear_aluno: boolean;
 };
 
-export const HomePage = () => {
+export const EstacionamentoPage = () => {
     const [stats, setStats] = useState<Estatisticas | null>(null);
     const [loading, setLoading] = useState(false);
     const [placa, setPlaca] = useState("");

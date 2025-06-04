@@ -73,7 +73,7 @@ export const UserPanelPage: React.FC = () => {
       return;
     }
     if (tipo === "admin") {
-      window.location.href = "/";
+      window.location.href = "/estacionamento";
       return;
     }
     fetchVeiculos();

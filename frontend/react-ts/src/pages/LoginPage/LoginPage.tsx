@@ -22,7 +22,7 @@ export const LoginPage: React.FC = () => {
         const tipo = localStorage.getItem("usuario_tipo");
         if (id) {
             if (tipo === "admin") {
-                navigate("/", { replace: true });
+                navigate("/estacionamento", { replace: true });
             } else {
                 navigate("/painel", { replace: true });
             }
@@ -75,7 +75,7 @@ export const LoginPage: React.FC = () => {
                 localStorage.setItem("usuario_nome", res.data.nome);
                 localStorage.setItem("usuario_tipo", res.data.tipo);
                 if (res.data.tipo === "admin") {
-                    navigate("/");
+                    navigate("/estacionamento");
                 } else {
                     navigate("/painel");
                 }
