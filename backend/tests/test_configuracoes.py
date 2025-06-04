@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_put_config_invalid_data():
     payload = {"total_vagas": "cem", "reservadas_professores": 10, "aviso_limite": 0.1}
-    response = client.put("/configuracoes", json=payload)
+    response = client.put("/configuracoes", json=payload, headers={"X-Usuario-Id": "1"})
     assert response.status_code == 422
     json_data = response.json()
     assert "detail" in json_data
@@ -30,7 +30,7 @@ def reset_configuracoes():
         conn.commit()
 
 def test_obter_configuracoes():
-    response = client.get("/configuracoes")
+    response = client.get("/configuracoes", headers={"X-Usuario-Id": "1"})
     assert response.status_code == 200
     json_data = response.json()
     assert json_data == {
@@ -45,12 +45,12 @@ def test_atualizar_configuracoes():
         "reservadas_professores": 50,
         "aviso_limite": 0.2
     }
-    response = client.put("/configuracoes", json=payload)
+    response = client.put("/configuracoes", json=payload, headers={"X-Usuario-Id": "1"})
     assert response.status_code == 200
     assert response.json() == {"status": "configurações atualizadas"}
 
     # Verifica se os dados foram atualizados no banco
-    response_get = client.get("/configuracoes")
+    response_get = client.get("/configuracoes", headers={"X-Usuario-Id": "1"})
     assert response_get.status_code == 200
     assert response_get.json() == payload
 
@@ -59,5 +59,5 @@ def test_atualizar_configuracoes():
     ({"total_vagas": 100, "reservadas_professores": None, "aviso_limite": 0.1}, 422),
 ])
 def test_atualizar_configuracoes_dados_invalidos(payload, expected_status):
-    response = client.put("/configuracoes", json=payload)
+    response = client.put("/configuracoes", json=payload, headers={"X-Usuario-Id": "1"})
     assert response.status_code == expected_status

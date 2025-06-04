@@ -18,9 +18,17 @@ export const HomePage = () => {
     const [loading, setLoading] = useState(false);
     const [placa, setPlaca] = useState("");
 
+    useEffect(() => {
+        const tipo = localStorage.getItem("usuario_tipo");
+        if (tipo !== "admin") {
+            window.location.href = "/painel";
+        }
+    }, []);
+
     const fetchStats = async () => {
         const res = await axios.get<Estatisticas>(
-            "http://localhost:8000/estatisticas"
+            "http://localhost:8000/estatisticas",
+            { headers: { "X-Usuario-Id": localStorage.getItem("usuario_id") || "" } }
         );
         setStats(res.data);
     };
@@ -31,17 +39,18 @@ export const HomePage = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const registrar = async (
-        tipo: "professor" | "aluno",
-        acao: "entrada" | "saida"
-    ) => {
+    const registrar = async (acao: "entrada" | "saida") => {
         if (!placa.trim()) {
             alert("Digite a placa do veículo");
             return;
         }
         setLoading(true);
         try {
-            await axios.post(`http://localhost:8000/${acao}/${tipo}`, { placa });
+            await axios.post(
+                `http://localhost:8000/${acao}`,
+                { placa },
+                { headers: { "X-Usuario-Id": localStorage.getItem("usuario_id") || "" } }
+            );
             await fetchStats();
             setPlaca("");
         } catch (err: any) {
@@ -109,30 +118,16 @@ export const HomePage = () => {
                 <button
                     className="btn btn-primary"
                     disabled={loading}
-                    onClick={() => registrar("professor", "entrada")}
+                    onClick={() => registrar("entrada")}
                 >
-                    Entrada de Professor
-                </button>
-                <button
-                    className="btn btn-primary"
-                    disabled={loading || stats.bloquear_aluno}
-                    onClick={() => registrar("aluno", "entrada")}
-                >
-                    Entrada de Aluno
+                    Registrar Entrada
                 </button>
                 <button
                     className="btn btn-secondary"
                     disabled={loading}
-                    onClick={() => registrar("professor", "saida")}
+                    onClick={() => registrar("saida")}
                 >
-                    Saida de Professor
-                </button>
-                <button
-                    className="btn btn-secondary"
-                    disabled={loading}
-                    onClick={() => registrar("aluno", "saida")}
-                >
-                    Saida de Aluno
+                    Registrar Saída
                 </button>
             </section>
         </div>

@@ -55,9 +55,14 @@ def init_db(db_path_to_init: str = None):
                 nome TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
-                matricula TEXT UNIQUE NOT NULL
+                matricula TEXT UNIQUE NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'aluno'
             )
         ''')
+        cursor.execute("PRAGMA table_info(usuarios)")
+        ucols = [row[1] for row in cursor.fetchall()]
+        if 'tipo' not in ucols:
+            cursor.execute("ALTER TABLE usuarios ADD COLUMN tipo TEXT NOT NULL DEFAULT 'aluno'")
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS veiculos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

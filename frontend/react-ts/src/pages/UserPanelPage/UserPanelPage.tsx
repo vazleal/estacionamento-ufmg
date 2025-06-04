@@ -66,16 +66,22 @@ export const UserPanelPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const tipo = localStorage.getItem("usuario_tipo");
     if (!usuarioId) {
-      window.location.href = "/login"; // Redireciona se não houver ID de usuário
+      window.location.href = "/login";
+      return;
+    }
+    if (tipo === "admin") {
+      window.location.href = "/";
       return;
     }
     fetchVeiculos();
-  }, [usuarioId]); // Roda quando usuarioId mudar (embora deva ser constante aqui)
+  }, [usuarioId]);
 
   const handleLogout = () => {
     localStorage.removeItem("usuario_id");
     localStorage.removeItem("usuario_nome");
+    localStorage.removeItem("usuario_tipo");
     window.location.href = "/login";
   };
 

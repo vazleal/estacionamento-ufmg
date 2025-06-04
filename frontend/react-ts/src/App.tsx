@@ -7,6 +7,7 @@ import { useState } from "react";
 
 function App() {
   const [isLoggedIn] = useState<boolean>(!!localStorage.getItem("usuario_id"));
+  const usuarioTipo = localStorage.getItem("usuario_tipo");
 
   return (
     <Router>
@@ -17,9 +18,11 @@ function App() {
           </h1>
           <nav className="nav">
             <ul>
-              <li>
-                <Link to="/" className="btn btn-secondary">Home</Link>
-              </li>
+              {usuarioTipo === "admin" && (
+                <li>
+                  <Link to="/" className="btn btn-secondary">Home</Link>
+                </li>
+              )}
               {!isLoggedIn ? (
                 <li>
                   <Link to="/login" className="btn btn-secondary">Login</Link>

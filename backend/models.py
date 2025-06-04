@@ -26,12 +26,14 @@ class UsuarioInput(BaseModel):
     email: str
     senha: str
     matricula: str
+    tipo: str
 
 class UsuarioOutput(BaseModel):
     id: int
     nome: str
     email: str
     matricula: str
+    tipo: str
 
 class LoginInput(BaseModel):
     email: str
