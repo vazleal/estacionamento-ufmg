@@ -54,3 +54,48 @@ def listar_veiculos(usuario_id: int):
         """, (usuario_id,))
         rows = cursor.fetchall()
     return [VeiculoOutput(id=row[0], placa=row[1]) for row in rows]
+
+@router.put("/usuario/{usuario_id}/veiculos/{veiculo_id}", response_model=VeiculoOutput)
+def update_veiculo(usuario_id: int, veiculo_id: int, veiculo_data: VeiculoInput):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        # Verificar se o veículo existe e pertence ao usuário
+        cursor.execute("SELECT id FROM veiculos WHERE id = ? AND usuario_id = ?", (veiculo_id, usuario_id))
+        existing_veiculo = cursor.fetchone()
+        if not existing_veiculo:
+            raise HTTPException(status_code=404, detail="Veículo não encontrado ou não pertence ao usuário")
+
+        try:
+            cursor.execute("""
+                UPDATE veiculos
+                SET placa = ?
+                WHERE id = ? AND usuario_id = ?
+            """, (veiculo_data.placa.upper(), veiculo_id, usuario_id))
+            conn.commit()
+        except Exception as e: # Tratar possível duplicidade de placa ao atualizar
+            conn.rollback()
+            print(f"Erro ao atualizar veículo: {e}")
+            raise HTTPException(status_code=409, detail=f"Já existe um veículo com a placa '{veiculo_data.placa.upper()}' para este usuário ou outro erro.")
+
+        if cursor.rowcount == 0: # Nenhum registro foi atualizado
+             raise HTTPException(status_code=404, detail="Veículo não encontrado para atualização")
+    return VeiculoOutput(id=veiculo_id, placa=veiculo_data.placa.upper())
+
+@router.delete("/usuario/{usuario_id}/veiculos/{veiculo_id}", status_code=204)
+def delete_veiculo(usuario_id: int, veiculo_id: int):
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        # Verificar se o veículo existe e pertence ao usuário
+        cursor.execute("SELECT id FROM veiculos WHERE id = ? AND usuario_id = ?", (veiculo_id, usuario_id))
+        existing_veiculo = cursor.fetchone()
+        if not existing_veiculo:
+            raise HTTPException(status_code=404, detail="Veículo não encontrado ou não pertence ao usuário")
+
+        cursor.execute("""
+            DELETE FROM veiculos
+            WHERE id = ? AND usuario_id = ?
+        """, (veiculo_id, usuario_id))
+        conn.commit()
+        if cursor.rowcount == 0: # Nenhum registro foi deletado
+            raise HTTPException(status_code=404, detail="Veículo não encontrado para exclusão")
+    return # Retorna 204 No Content
