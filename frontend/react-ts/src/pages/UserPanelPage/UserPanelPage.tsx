@@ -49,7 +49,8 @@ export const UserPanelPage: React.FC = () => {
     clearMessages();
     try {
       const response = await fetch(
-        `${API_BASE_URL}/usuario/${usuarioId}/veiculos`
+        `${API_BASE_URL}/usuario/${usuarioId}/veiculos`,
+        { headers: { "X-Usuario-Id": usuarioId } }
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({detail: "Falha ao buscar veículos."}));
@@ -105,7 +106,10 @@ export const UserPanelPage: React.FC = () => {
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Usuario-Id": usuarioId,
+          },
           body: JSON.stringify({ placa: novaPlaca }),
         }
       );
@@ -135,7 +139,10 @@ export const UserPanelPage: React.FC = () => {
     try {
       const response = await fetch(
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos/${veiculoId}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: { "X-Usuario-Id": usuarioId },
+        }
       );
       if (!response.ok && response.status !== 204) { // 204 No Content é um sucesso
         const errorData = await response.json().catch(() => ({detail: "Falha ao remover veículo."}));
@@ -185,7 +192,10 @@ export const UserPanelPage: React.FC = () => {
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos/${editingVeiculo.id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Usuario-Id": usuarioId,
+          },
           body: JSON.stringify({ placa: editingPlaca }),
         }
       );
