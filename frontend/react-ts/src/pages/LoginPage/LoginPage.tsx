@@ -83,6 +83,8 @@ export const LoginPage: React.FC = () => {
                 alert(error.response?.data?.detail || "Erro no login.");
             }
         }
+
+        window.location.reload(); 
     };
 
     return (

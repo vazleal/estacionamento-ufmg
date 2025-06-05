@@ -80,6 +80,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  background-color: var(--bg);
 }
 
 .card {

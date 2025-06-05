@@ -32,7 +32,6 @@ def init_db(db_path_to_init: str = None):
                 dia_semana TEXT NOT NULL
             )
         ''')
-        # Caso a tabela já exista sem a coluna de placa (versões antigas)
         cursor.execute("PRAGMA table_info(entradas)")
         cols = [row[1] for row in cursor.fetchall()]
         if 'placa' not in cols:

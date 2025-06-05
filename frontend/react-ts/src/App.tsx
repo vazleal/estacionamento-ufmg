@@ -31,7 +31,7 @@ function App() {
                   <Link to="/estacionamento" className="btn btn-secondary">Estacionamento</Link>
                 </li>
               )}
-              {isLoggedIn && (
+              {isLoggedIn && usuarioTipo !== "admin" &&(
                 <li>
                   <Link to="/painel" className="btn btn-secondary">Painel</Link>
                 </li>
@@ -48,7 +48,7 @@ function App() {
         </header>
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Navigate to="/estacionamento" replace />} />
+            <Route path="/" element={<Navigate to="/login" replace />} />
             <Route path="/estacionamento" element={<EstacionamentoPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/painel" element={<UserPanelPage />} />

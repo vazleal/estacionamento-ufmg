@@ -1,21 +1,19 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import "../../App.css";
-import "./UserPanelPage.css"; // Certifique-se que este CSS será atualizado também
+import "./UserPanelPage.css";
 
-// Interface para o objeto Veiculo (espelhando VeiculoOutput do backend)
 interface Veiculo {
   id: number;
   placa: string;
 }
 
-// URL base da API (ajuste se necessário)
-const API_BASE_URL = "http://localhost:8000"; // Ou o endereço do seu backend
+const API_BASE_URL = "http://localhost:8000"; 
 
 export const UserPanelPage: React.FC = () => {
   const [veiculos, setVeiculos] = useState<Veiculo[]>([]);
   const [novaPlaca, setNovaPlaca] = useState<string>("");
-  const [editingVeiculo, setEditingVeiculo] = useState<Veiculo | null>(null); // Veículo sendo editado
-  const [editingPlaca, setEditingPlaca] = useState<string>(""); // Placa no formulário de edição
+  const [editingVeiculo, setEditingVeiculo] = useState<Veiculo | null>(null);
+  const [editingPlaca, setEditingPlaca] = useState<string>(""); 
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +22,6 @@ export const UserPanelPage: React.FC = () => {
   const usuarioId = localStorage.getItem("usuario_id");
   const usuarioNome = localStorage.getItem("usuario_nome");
 
-  // Função para limpar mensagens após um tempo
   const clearMessages = () => {
     setError(null);
     setSuccessMessage(null);
@@ -79,13 +76,6 @@ export const UserPanelPage: React.FC = () => {
     fetchVeiculos();
   }, [usuarioId]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("usuario_id");
-    localStorage.removeItem("usuario_nome");
-    localStorage.removeItem("usuario_tipo");
-    window.location.href = "/login";
-  };
-
   const formatPlaca = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
 
   const handleNovaPlacaChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +111,7 @@ export const UserPanelPage: React.FC = () => {
       }
       // const novoVeiculoAdicionado: Veiculo = await response.json();
       setNovaPlaca("");
-      fetchVeiculos(); // Re-buscar veículos para atualizar a lista
+      fetchVeiculos();
       displaySuccess("Veículo adicionado com sucesso! 🚗");
     } catch (err: any) {
       console.error("Erro ao adicionar veículo:", err);
@@ -131,7 +121,6 @@ export const UserPanelPage: React.FC = () => {
     }
   };
 
-  // Deletar Veículo
   const handleDeleteVeiculo = async (veiculoId: number) => {
     if (!usuarioId) return;
     if (!window.confirm("Tem certeza que deseja remover este veículo?")) return;
@@ -146,7 +135,7 @@ export const UserPanelPage: React.FC = () => {
           headers: { "X-Usuario-Id": usuarioId },
         }
       );
-      if (!response.ok && response.status !== 204) { // 204 No Content é um sucesso
+      if (!response.ok && response.status !== 204) {
         const errorData = await response.json().catch(() => ({detail: "Falha ao remover veículo."}));
         throw new Error(errorData.detail);
       }
@@ -219,7 +208,6 @@ export const UserPanelPage: React.FC = () => {
   };
 
   if (!usuarioId) {
-    // Pode mostrar um loader ou null enquanto redireciona
     return <p>Redirecionando para login...</p>;
   }
 
@@ -300,7 +288,7 @@ export const UserPanelPage: React.FC = () => {
                       onClick={() => handleStartEditVeiculo(veiculo)}
                       className="btn btn-edit"
                       title="Editar Veículo"
-                      disabled={isLoading || !!editingVeiculo} // Desabilitar se já estiver editando outro ou carregando
+                      disabled={isLoading || !!editingVeiculo}
                     >
                       ✏️ Editar
                     </button>
@@ -308,7 +296,7 @@ export const UserPanelPage: React.FC = () => {
                       onClick={() => handleDeleteVeiculo(veiculo.id)}
                       className="btn btn-remove"
                       title="Remover Veículo"
-                      disabled={isLoading || !!editingVeiculo} // Desabilitar para evitar ações conflitantes
+                      disabled={isLoading || !!editingVeiculo}
                     >
                       🗑️ Remover
                     </button>
@@ -318,10 +306,6 @@ export const UserPanelPage: React.FC = () => {
             </ul>
           )}
         </div>
-        <hr className="divider" />
-        <button className="login-btn logout-btn" onClick={handleLogout} disabled={isLoading}>
-          Logout
-        </button>
       </div>
     </main>
   );
