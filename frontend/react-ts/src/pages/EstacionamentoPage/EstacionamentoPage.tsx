@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type Estatisticas = {
   total: number;
@@ -13,13 +13,27 @@ type Estatisticas = {
   bloquear_aluno: boolean;
 };
 
-export const HomePage = () => {
+export const EstacionamentoPage = () => {
     const [stats, setStats] = useState<Estatisticas | null>(null);
     const [loading, setLoading] = useState(false);
+    const [placa, setPlaca] = useState("");
+
+    const handlePlacaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+        setPlaca(value);
+    };
+
+    useEffect(() => {
+        const tipo = localStorage.getItem("usuario_tipo");
+        if (tipo !== "admin") {
+            window.location.href = "/painel";
+        }
+    }, []);
 
     const fetchStats = async () => {
         const res = await axios.get<Estatisticas>(
-            "http://localhost:8000/estatisticas"
+            "http://localhost:8000/estatisticas",
+            { headers: { "X-Usuario-Id": localStorage.getItem("usuario_id") || "" } }
         );
         setStats(res.data);
     };
@@ -30,14 +44,20 @@ export const HomePage = () => {
         return () => clearInterval(interval);
     }, []);
 
-    const registrar = async (
-        tipo: "professor" | "aluno",
-        acao: "entrada" | "saida"
-    ) => {
+    const registrar = async (acao: "entrada" | "saida") => {
+        if (!placa.trim()) {
+            alert("Digite a placa do veículo");
+            return;
+        }
         setLoading(true);
         try {
-            await axios.post(`http://localhost:8000/${acao}/${tipo}`);
+            await axios.post(
+                `http://localhost:8000/${acao}`,
+                { placa },
+                { headers: { "X-Usuario-Id": localStorage.getItem("usuario_id") || "" } }
+            );
             await fetchStats();
+            setPlaca("");
         } catch (err: any) {
             alert(err.response?.data?.detail ?? "Erro ao registrar ação");
         } finally {
@@ -93,33 +113,27 @@ export const HomePage = () => {
             )}
 
             <section className="actions">
+                <input
+                    type="text"
+                    value={placa}
+                    onChange={handlePlacaChange}
+                    placeholder="Placa do veículo"
+                    className="input"
+                    maxLength={7}
+                />
                 <button
                     className="btn btn-primary"
                     disabled={loading}
-                    onClick={() => registrar("professor", "entrada")}
+                    onClick={() => registrar("entrada")}
                 >
-                    Entrada de Professor
-                </button>
-                <button
-                    className="btn btn-primary"
-                    disabled={loading || stats.bloquear_aluno}
-                    onClick={() => registrar("aluno", "entrada")}
-                >
-                    Entrada de Aluno
+                    Registrar Entrada
                 </button>
                 <button
                     className="btn btn-secondary"
                     disabled={loading}
-                    onClick={() => registrar("professor", "saida")}
+                    onClick={() => registrar("saida")}
                 >
-                    Saida de Professor
-                </button>
-                <button
-                    className="btn btn-secondary"
-                    disabled={loading}
-                    onClick={() => registrar("aluno", "saida")}
-                >
-                    Saida de Aluno
+                    Registrar Saída
                 </button>
             </section>
         </div>

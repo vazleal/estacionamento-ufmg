@@ -39,16 +39,20 @@
 
 .veiculo-input {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: #f3f6fa;
+  box-shadow: 0 1px 4px rgba(0,43,92,0.04);
   font-size: 1rem;
-  box-sizing: border-box;
+  color: var(--primary);
+  margin-bottom: 1rem;
   text-transform: uppercase;
+  transition: box-shadow 0.2s;
 }
 .veiculo-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  outline: none;
+  box-shadow: 0 2px 8px rgba(0,43,92,0.10);
 }
 
 .veiculo-form .form-actions {

@@ -49,7 +49,8 @@ export const UserPanelPage: React.FC = () => {
     clearMessages();
     try {
       const response = await fetch(
-        `${API_BASE_URL}/usuario/${usuarioId}/veiculos`
+        `${API_BASE_URL}/usuario/${usuarioId}/veiculos`,
+        { headers: { "X-Usuario-Id": usuarioId } }
       );
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({detail: "Falha ao buscar veículos."}));
@@ -66,21 +67,29 @@ export const UserPanelPage: React.FC = () => {
   };
 
   useEffect(() => {
+    const tipo = localStorage.getItem("usuario_tipo");
     if (!usuarioId) {
-      window.location.href = "/login"; // Redireciona se não houver ID de usuário
+      window.location.href = "/login";
+      return;
+    }
+    if (tipo === "admin") {
+      window.location.href = "/estacionamento";
       return;
     }
     fetchVeiculos();
-  }, [usuarioId]); // Roda quando usuarioId mudar (embora deva ser constante aqui)
+  }, [usuarioId]);
 
   const handleLogout = () => {
     localStorage.removeItem("usuario_id");
     localStorage.removeItem("usuario_nome");
+    localStorage.removeItem("usuario_tipo");
     window.location.href = "/login";
   };
 
+  const formatPlaca = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+
   const handleNovaPlacaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNovaPlaca(e.target.value.toUpperCase());
+    setNovaPlaca(formatPlaca(e.target.value));
   };
 
   // Adicionar Veículo
@@ -99,7 +108,10 @@ export const UserPanelPage: React.FC = () => {
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Usuario-Id": usuarioId,
+          },
           body: JSON.stringify({ placa: novaPlaca }),
         }
       );
@@ -129,7 +141,10 @@ export const UserPanelPage: React.FC = () => {
     try {
       const response = await fetch(
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos/${veiculoId}`,
-        { method: "DELETE" }
+        {
+          method: "DELETE",
+          headers: { "X-Usuario-Id": usuarioId },
+        }
       );
       if (!response.ok && response.status !== 204) { // 204 No Content é um sucesso
         const errorData = await response.json().catch(() => ({detail: "Falha ao remover veículo."}));
@@ -160,7 +175,7 @@ export const UserPanelPage: React.FC = () => {
   };
 
   const handleEditingPlacaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEditingPlaca(e.target.value.toUpperCase());
+    setEditingPlaca(formatPlaca(e.target.value));
   };
 
   // Atualizar Veículo
@@ -179,7 +194,10 @@ export const UserPanelPage: React.FC = () => {
         `${API_BASE_URL}/usuario/${usuarioId}/veiculos/${editingVeiculo.id}`,
         {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Usuario-Id": usuarioId,
+          },
           body: JSON.stringify({ placa: editingPlaca }),
         }
       );
@@ -230,8 +248,8 @@ export const UserPanelPage: React.FC = () => {
                   id="editingPlaca"
                   value={editingPlaca}
                   onChange={handleEditingPlacaChange}
-                  placeholder="AAA-0000 ou ABC1D23"
-                  maxLength={8} // Ex: ABC-1234 ou ABC1D23 (Padrão Mercosul)
+                  placeholder="ABC1234"
+                  maxLength={7}
                   required
                   className="veiculo-input"
                 />
@@ -255,8 +273,8 @@ export const UserPanelPage: React.FC = () => {
                   id="novaPlaca"
                   value={novaPlaca}
                   onChange={handleNovaPlacaChange}
-                  placeholder="AAA-0000 ou ABC1D23"
-                  maxLength={8}
+                  placeholder="ABC1234"
+                  maxLength={7}
                   required
                   className="veiculo-input"
                 />
