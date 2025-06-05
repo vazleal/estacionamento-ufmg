@@ -12,7 +12,7 @@ def registrar_entrada(placa_info: PlacaInput, user=Depends(verificar_usuario_log
     if user["tipo"] != "admin":
         raise HTTPException(status_code=403, detail="Acesso restrito")
 
-    placa = placa_info.placa.upper()
+    placa = placa_info.placa
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(
@@ -49,7 +49,7 @@ def registrar_saida(placa_info: PlacaInput, user=Depends(verificar_usuario_logad
     if user["tipo"] != "admin":
         raise HTTPException(status_code=403, detail="Acesso restrito")
 
-    placa = placa_info.placa.upper()
+    placa = placa_info.placa
     with get_connection() as conn:
         cursor = conn.cursor()
         cursor.execute(

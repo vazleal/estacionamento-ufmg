@@ -86,8 +86,10 @@ export const UserPanelPage: React.FC = () => {
     window.location.href = "/login";
   };
 
+  const formatPlaca = (v: string) => v.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+
   const handleNovaPlacaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNovaPlaca(e.target.value.toUpperCase());
+    setNovaPlaca(formatPlaca(e.target.value));
   };
 
   // Adicionar Veículo
@@ -173,7 +175,7 @@ export const UserPanelPage: React.FC = () => {
   };
 
   const handleEditingPlacaChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setEditingPlaca(e.target.value.toUpperCase());
+    setEditingPlaca(formatPlaca(e.target.value));
   };
 
   // Atualizar Veículo
@@ -246,8 +248,8 @@ export const UserPanelPage: React.FC = () => {
                   id="editingPlaca"
                   value={editingPlaca}
                   onChange={handleEditingPlacaChange}
-                  placeholder="AAA-0000 ou ABC1D23"
-                  maxLength={8} // Ex: ABC-1234 ou ABC1D23 (Padrão Mercosul)
+                  placeholder="ABC1234"
+                  maxLength={7}
                   required
                   className="veiculo-input"
                 />
@@ -271,8 +273,8 @@ export const UserPanelPage: React.FC = () => {
                   id="novaPlaca"
                   value={novaPlaca}
                   onChange={handleNovaPlacaChange}
-                  placeholder="AAA-0000 ou ABC1D23"
-                  maxLength={8}
+                  placeholder="ABC1234"
+                  maxLength={7}
                   required
                   className="veiculo-input"
                 />
