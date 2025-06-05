@@ -6,8 +6,16 @@ import { UserPanelPage } from "./pages/UserPanelPage/UserPanelPage";
 import { useState } from "react";
 
 function App() {
-  const [isLoggedIn] = useState<boolean>(!!localStorage.getItem("usuario_id"));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(!!localStorage.getItem("usuario_id"));
   const usuarioTipo = localStorage.getItem("usuario_tipo");
+
+  const handleLogout = () => {
+    localStorage.removeItem("usuario_id");
+    localStorage.removeItem("usuario_nome");
+    localStorage.removeItem("usuario_tipo");
+    setIsLoggedIn(false);
+    window.location.href = "/login";
+  };
 
   return (
     <Router>
@@ -23,15 +31,18 @@ function App() {
                   <Link to="/estacionamento" className="btn btn-secondary">Estacionamento</Link>
                 </li>
               )}
-              {!isLoggedIn ? (
+              {isLoggedIn && (
                 <li>
-                  <Link to="/login" className="btn btn-secondary">Login</Link>
-                </li>
-              ) : (
-                <li >
                   <Link to="/painel" className="btn btn-secondary">Painel</Link>
                 </li>
               )}
+              <li>
+                {!isLoggedIn ? (
+                  <Link to="/login" className="btn btn-secondary">Login</Link>
+                ) : (
+                  <button onClick={handleLogout} className="btn btn-secondary">Logout</button>
+                )}
+              </li>
             </ul>
           </nav>
         </header>

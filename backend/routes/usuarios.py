@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, HTTPException, Header, Depends
-from models import UsuarioInput, UsuarioOutput, LoginInput, VeiculoInput, VeiculoOutput
+from models import UsuarioInput, UsuarioOutput, LoginInput, VeiculoInput, VeiculoOutput, UpdateTipoInput
 from database import get_connection
 
 router = APIRouter()
@@ -45,6 +45,24 @@ def login(cred: LoginInput):
         if not user:
             raise HTTPException(status_code=401, detail="Credenciais inválidas")
     return UsuarioOutput(id=user[0], nome=user[1], email=user[2], matricula=user[3], tipo=user[4])
+
+
+@router.put("/usuario/tipo")
+def atualizar_tipo(dados: UpdateTipoInput, user=Depends(verificar_usuario_logado)):
+    if user["tipo"] != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito")
+    if dados.tipo not in ["admin", "aluno", "professor"]:
+        raise HTTPException(status_code=400, detail="Tipo de usuário inválido")
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE usuarios SET tipo = ? WHERE email = ?",
+            (dados.tipo, dados.email),
+        )
+        conn.commit()
+        if cursor.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return {"status": "tipo atualizado"}
 
 @router.post("/usuario/{usuario_id}/veiculos", response_model=VeiculoOutput)
 def add_veiculo(usuario_id: int, veiculo: VeiculoInput, user=Depends(verificar_usuario_logado)):

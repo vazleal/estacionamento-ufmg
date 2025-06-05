@@ -1,5 +1,6 @@
 # models.py
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
+import re
 
 class Estatisticas(BaseModel):
     total: int
@@ -48,3 +49,14 @@ class VeiculoOutput(BaseModel):
 
 class PlacaInput(BaseModel):
     placa: str
+
+    @validator('placa')
+    def validar_placa(cls, v: str) -> str:
+        v = v.upper()
+        if not re.fullmatch(r'[A-Z0-9]{7}', v):
+            raise ValueError('Placa inválida')
+        return v
+
+class UpdateTipoInput(BaseModel):
+    email: str
+    tipo: str

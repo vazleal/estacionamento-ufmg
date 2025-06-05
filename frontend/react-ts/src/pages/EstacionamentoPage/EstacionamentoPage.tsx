@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type Estatisticas = {
   total: number;
@@ -17,6 +17,11 @@ export const EstacionamentoPage = () => {
     const [stats, setStats] = useState<Estatisticas | null>(null);
     const [loading, setLoading] = useState(false);
     const [placa, setPlaca] = useState("");
+
+    const handlePlacaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+        setPlaca(value);
+    };
 
     useEffect(() => {
         const tipo = localStorage.getItem("usuario_tipo");
@@ -111,9 +116,10 @@ export const EstacionamentoPage = () => {
                 <input
                     type="text"
                     value={placa}
-                    onChange={(e) => setPlaca(e.target.value.toUpperCase())}
+                    onChange={handlePlacaChange}
                     placeholder="Placa do veículo"
                     className="input"
+                    maxLength={7}
                 />
                 <button
                     className="btn btn-primary"
