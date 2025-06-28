@@ -3,29 +3,23 @@ from fastapi.testclient import TestClient
 from main import app
 from database import get_connection
 
-@pytest.fixture(scope="session", autouse=True)
-def setup_database():
+@pytest.fixture(autouse=True)
+def setup_and_cleanup_db():
     with get_connection() as conn:
         cursor = conn.cursor()
-        # Cria a entrada esperada
-        cursor.execute("INSERT OR IGNORE INTO configuracoes (id, total_vagas, reservadas_professores, aviso_limite) VALUES (1, 100, 10, 0.2)")
+        # Limpa e insere dados iniciais
+        cursor.execute("DELETE FROM configuracoes")
+        cursor.execute("INSERT INTO configuracoes (id, total_vagas, reservadas_professores, aviso_limite) VALUES (1, 100, 10, 0.2)")
+        cursor.execute("DELETE FROM entradas")
+        conn.commit()
+    yield
+    with get_connection() as conn:
+        cursor = conn.cursor()
+        # Limpa depois do teste para evitar interferência
+        cursor.execute("DELETE FROM entradas")
         conn.commit()
 
 client = TestClient(app)
-
-def test_obter_configuracoes_api():
-    # Faz uma requisição GET para a rota /configuracoes
-    response = client.get("/configuracoes")  
-
-    assert response.status_code == 200
-    
-    data = response.json()
-
-    assert isinstance(data, dict)
-
-    assert "total_vagas" in data and data["total_vagas"] > 0
-    # Verifica se a chave 'reservadas_professores' existe e é um inteiro
-    assert "reservadas_professores" in data and isinstance(data["reservadas_professores"], int)
 
 def test_atualizar_configuracoes_api():
     # Define o payload com novos valores para atualização
@@ -65,3 +59,16 @@ def test_inserir_entrada_professor_api():
     # Confirma que o número de professores aumentou em 1
     assert vagas_depois == vagas_antes + 1
 
+def test_obter_configuracoes_api():
+    # Faz uma requisição GET para a rota /configuracoes
+    response = client.get("/configuracoes")  
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert isinstance(data, dict)
+
+    assert "total_vagas" in data and data["total_vagas"] > 0
+    # Verifica se a chave 'reservadas_professores' existe e é um inteiro
+    assert "reservadas_professores" in data and isinstance(data["reservadas_professores"], int)
