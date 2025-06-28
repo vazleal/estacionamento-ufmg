@@ -11,14 +11,21 @@ export const LoginPage: React.FC = () => {
         email: "",
         senha: "",
         confirma: "",
-        matricula: ""
+        matricula: "",
+        tipo: "aluno"
     });
 
     const navigate = useNavigate();
 
     React.useEffect(() => {
-        if (localStorage.getItem("usuario_id")) {
-            navigate("/painel", { replace: true });
+        const id = localStorage.getItem("usuario_id");
+        const tipo = localStorage.getItem("usuario_tipo");
+        if (id) {
+            if (tipo === "admin") {
+                navigate("/estacionamento", { replace: true });
+            } else {
+                navigate("/painel", { replace: true });
+            }
         }
     }, [navigate]);
 
@@ -26,7 +33,7 @@ export const LoginPage: React.FC = () => {
         return null; 
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
 
@@ -44,7 +51,8 @@ export const LoginPage: React.FC = () => {
                     nome: form.nome,
                     email: form.email,
                     senha: form.senha,
-                    matricula: form.matricula
+                    matricula: form.matricula,
+                    tipo: form.tipo
                 });
                 if(res.status == 200) {
                     alert("Cadastro realizado com sucesso!");
@@ -65,13 +73,18 @@ export const LoginPage: React.FC = () => {
                 alert("Login realizado com sucesso!");
                 localStorage.setItem("usuario_id", res.data.id);
                 localStorage.setItem("usuario_nome", res.data.nome);
-                window.location.reload();  // Recarrega a página para atualizar o estado
-
-                navigate("/");  // Redireciona para Home
+                localStorage.setItem("usuario_tipo", res.data.tipo);
+                if (res.data.tipo === "admin") {
+                    navigate("/estacionamento");
+                } else {
+                    navigate("/painel");
+                }
             } catch (error: any) {
                 alert(error.response?.data?.detail || "Erro no login.");
             }
         }
+
+        window.location.reload(); 
     };
 
     return (
@@ -133,6 +146,15 @@ export const LoginPage: React.FC = () => {
                                 required
                                 className="input"
                             />
+                            <select
+                                name="tipo"
+                                value={form.tipo}
+                                onChange={handleChange}
+                                className="input"
+                            >
+                                <option value="aluno">Aluno</option>
+                                <option value="professor">Professor</option>
+                            </select>
                         </>
                     )}
 

@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, HTTPException
 from models import Estatisticas
 from database import get_connection
+from routes.usuarios import verificar_usuario_logado
 
 def get_configuracoes():
     with get_connection() as conn:
@@ -45,5 +46,7 @@ def get_estatisticas():
 router = APIRouter()
 
 @router.get("/estatisticas", response_model=Estatisticas)
-def painel():
+def painel(user=Depends(verificar_usuario_logado)):
+    if user["tipo"] != "admin":
+        raise HTTPException(status_code=403, detail="Acesso restrito")
     return get_estatisticas()

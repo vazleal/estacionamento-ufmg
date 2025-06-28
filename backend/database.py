@@ -2,21 +2,40 @@
 import sqlite3
 import os
 
-DATABASE = 'data/estacionamento.db'
+DEFAULT_DATABASE_PATH = 'data/estacionamento.db'
 
-def init_db():
+_CURRENT_DATABASE_PATH = os.environ.get('APP_DATABASE_PATH', DEFAULT_DATABASE_PATH)
+
+def get_db_path():
+    return _CURRENT_DATABASE_PATH
+
+def set_db_path(path: str):
+    global _CURRENT_DATABASE_PATH
+    _CURRENT_DATABASE_PATH = path
+    db_dir = os.path.dirname(path)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+
+def init_db(db_path_to_init: str = None):
+    current_path = db_path_to_init if db_path_to_init else get_db_path()
+    
     if not os.path.exists('data'):
         os.makedirs('data')
-    with sqlite3.connect(DATABASE) as conn:
+    with sqlite3.connect(current_path) as conn:
         cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS entradas (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 tipo TEXT NOT NULL,
+                placa TEXT NOT NULL,
                 data_hora TEXT NOT NULL,
                 dia_semana TEXT NOT NULL
             )
         ''')
+        cursor.execute("PRAGMA table_info(entradas)")
+        cols = [row[1] for row in cursor.fetchall()]
+        if 'placa' not in cols:
+            cursor.execute("ALTER TABLE entradas ADD COLUMN placa TEXT NOT NULL DEFAULT ''")
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS configuracoes (
                 id INTEGER PRIMARY KEY CHECK (id = 1),
@@ -35,9 +54,14 @@ def init_db():
                 nome TEXT NOT NULL,
                 email TEXT UNIQUE NOT NULL,
                 senha TEXT NOT NULL,
-                matricula TEXT UNIQUE NOT NULL
+                matricula TEXT UNIQUE NOT NULL,
+                tipo TEXT NOT NULL DEFAULT 'aluno'
             )
         ''')
+        cursor.execute("PRAGMA table_info(usuarios)")
+        ucols = [row[1] for row in cursor.fetchall()]
+        if 'tipo' not in ucols:
+            cursor.execute("ALTER TABLE usuarios ADD COLUMN tipo TEXT NOT NULL DEFAULT 'aluno'")
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS veiculos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +73,6 @@ def init_db():
         conn.commit()
 
 def get_connection():
-    return sqlite3.connect(DATABASE)
+    return sqlite3.connect(get_db_path())
 
 

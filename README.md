@@ -1,3 +1,10 @@
+# Integrantes
+
+- Matheus Vaz Leal Lima
+- Raphaela Maria Costa e Silva
+- Victor Kenji Pawlowski Abeki
+
+
 # Sistema de Gerenciamento de Vagas - Estacionamento Universitário
 
 Este projeto é um sistema simples para gerenciar o uso de vagas em um estacionamento universitário, com foco em garantir a disponibilidade de vagas para **professores**, utilizando um backend em **FastAPI** e frontend em **React**.
@@ -35,11 +42,11 @@ Este projeto é um sistema simples para gerenciar o uso de vagas em um estaciona
 
 ### ⚙️ Backend
 ```bash
-# Instalar dependências
-pip install fastapi uvicorn
-
 # Entrar no backend
 cd backend
+
+# Instalar dependências
+pip install -r requirements.txt
 
 # Rodar
 uvicorn main:app --reload
@@ -63,20 +70,25 @@ npm run dev
 ## 📁 Estrutura do Projeto
 
 ```bash
-estacionamento/
-├── main.py
-├── database.py
-├── models.py
-├── routes/
-│   ├── __init__.py
-│   ├── estatisticas.py
-│   ├── configuracoes.py
-│   └── entradas.py
-├── data/
-│   └── estacionamento.db
-estacionamento-frontend/
-├── src/
-│   ├── App.tsx
-│   ├── main.tsx
-│   └── ...
+estacionamento-ufmg/
+├── backend/
+│   ├── main.py
+│   ├── database.py
+│   ├── models.py
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── estatisticas.py
+│   │   ├── configuracoes.py
+│   │   ├── entradas.py
+│   │   └── usuarios.py
+│   ├── tests/...
+│   ├── data/
+│   │   └── estacionamento.db
+├── frontend/
+│   └── react-ts/
+│       └── src/
+│           ├── App.tsx
+│           ├── main.tsx
+│           └── pages/...
+│           └── __tests__/...
 ```
