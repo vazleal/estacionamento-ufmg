@@ -18,6 +18,7 @@ def test_obter_configuracoes_api():
     response = client.get("/configuracoes")  
 
     assert response.status_code == 200
+    
     data = response.json()
 
     assert isinstance(data, dict)
