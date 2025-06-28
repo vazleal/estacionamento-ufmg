@@ -35,7 +35,7 @@ jobs:
     - name: Run tests
       run: |
         pip install pytest
-        pytest
+        pytest -v --maxfail=1 --disable-warnings
 
   frontend:
     name: Frontend - React + Vite
