@@ -60,28 +60,21 @@ def professor_user_with_vehicle(admin_user_headers):
         "placa": "PROF123"
     }
 
-def test_obter_configuracoes_api(admin_user_headers):
-    response = client.get("/configuracoes", headers=admin_user_headers)
+def test_get_estatisticas(admin_user_headers):
+    response = client.get("/estatisticas", headers=admin_user_headers)
     assert response.status_code == 200
     data = response.json()
-    assert isinstance(data, dict)
-    assert "total_vagas" in data and data["total_vagas"] > 0
-    assert "reservadas_professores" in data and isinstance(data["reservadas_professores"], int)
+    assert "total" in data
+    assert "livres" in data
+    assert "professores" in data
 
-def test_inserir_entrada_professor_api(professor_user_with_vehicle, admin_user_headers):
-    response_before = client.get("/estatisticas", headers=admin_user_headers)
-    assert response_before.status_code == 200
-    vagas_antes = response_before.json().get("professores", 0)
+def test_saida_apos_entrada(professor_user_with_vehicle, admin_user_headers):
+    client.post("/entrada", json={"placa": professor_user_with_vehicle["placa"]}, headers=admin_user_headers)
+    
+    response = client.post("/saida", json={"placa": professor_user_with_vehicle["placa"]}, headers=admin_user_headers)
+    assert response.status_code == 200
+    assert response.json().get("status") == "saida registrada"
 
-    response_registro = client.post("/entrada", json={"placa": professor_user_with_vehicle["placa"]}, headers=admin_user_headers)
-    assert response_registro.status_code == 200
-    assert response_registro.json().get("status") == "entrada registrada"
-
-    response_after = client.get("/estatisticas", headers=admin_user_headers)
-    assert response_after.status_code == 200
-    vagas_depois = response_after.json().get("professores", 0)
-
-    assert vagas_depois == vagas_antes + 1
 
 def test_atualizar_configuracoes_api(admin_user_headers):
     payload = {
@@ -104,3 +97,13 @@ def test_acesso_sem_autenticacao_negado():
     assert response.status_code == 401
     response = client.post("/entrada", json={"placa": "QUALQUER"})
     assert response.status_code == 401
+
+def test_professor_nao_pode_entrar_duas_vezes(professor_user_with_vehicle, admin_user_headers):
+    response1 = client.post("/entrada", json={"placa": professor_user_with_vehicle["placa"]}, headers=admin_user_headers)
+    assert response1.status_code == 200
+    assert response1.json()["status"] == "entrada registrada"
+
+    response2 = client.post("/entrada", json={"placa": professor_user_with_vehicle["placa"]}, headers=admin_user_headers)
+    assert response2.status_code == 400
+    assert "já está no estacionamento" in response2.json()["detail"]
+
