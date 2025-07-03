@@ -79,6 +79,7 @@ export const LoginPage: React.FC = () => {
                 } else {
                     navigate("/painel");
                 }
+                window.location.reload();
             } catch (error: any) {
                 alert(error.response?.data?.detail || "Erro no login.");
             }
